@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de fichier Excel Electre</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+var ExcelToJSON = function() {
+
+    this.parseExcel = function(file) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+        var data = e.target.result;
+        var workbook = XLSX.read(data, {
+            type: 'binary'
+        });
+
+        /*
+        Colonne A : Enlever les espaces et les deux points après les chiffres
+        Colonne D : Inverser les noms et prénoms et supprimer les virgules et supprimer le texte de type "19XX-...." ou "18XX-...."
+        Colonne E : Supprime les virgules
+        Colonne G : Supprimer les parenthèses
+        Colonne H : Sur la base du texte "1 vol. (XXX p.) ; supprimer "1 vol. " avant les parenthèses  et supprimer " ;"  et " :" après les parenthèses
+        Colonne I : Supprimer " ;" après le texte
+        Colonne J : Transformer le texte en lettre minuscules en lettres capitales et remplacer toutes les case vides par "FR" jusqu'à la ligne 101
+        Colonne K : Remplacer le texte "Année parution" par "Date parution"
+        Colonne L : Remplacer le texte "Note" par "Commentaires
+      */
+
+        const resultingArray = [
+            ["ISBN", "Titre", "Tome", "Auteur", "Editeur", "Mot matière", "Collection", "Collation 1", "Collation 2", "Langue originale", "Date parution", "Commentaires"]
+        ];
+        var destworkbook = XLSX.utils.book_new();
+        
+        workbook.SheetNames.forEach(function(sheetName) {
+            // Here is your object
+            /** @type {Array<{"ISBN":string, "Titre":string, "Auteur":string, "Editeur":string, "Mot matière":string, "Collection":string, "Collation 1":string, "Collation 2":string, "Langue originale":string, "Année parution":string, "Note":string }>} */
+            var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+            for(const line of XL_row_object){
+                console.log(line["ISBN"].replace(/(\d+)\s*:/, "$1"))
+                const newRowData = [];
+                /* A */ newRowData.push(line["ISBN"].replace(/(\d+)\s*:/, "$1"));
+                /* B */ newRowData.push(line["Titre"] || "");
+                /* C */ newRowData.push(line["Tome"] || "");
+                /* D */ newRowData.push(line["Auteur"].replace(/(\w+),\s*(\w+).*/, "$2 $1") || "");
+                /* E */ newRowData.push(line["Editeur"].replace(/,/g, ""));
+                /* F */ newRowData.push(line["Mot matière"]);
+                /* G */ newRowData.push(line["Collection"]?.replace(/\(([^)]+)\)/, "$1") || "");
+                /* H */ newRowData.push(line["Collation 1"].replace(/\d vol. \(([^)]+)\).*/, "($1)"));
+                /* I */ newRowData.push(line["Collation 2"]?.replace(/\s*;/g, "") || "");
+                /* J */ newRowData.push(
+                    line["Langue originale"] && line["Langue originale"].length > 0 ? line["Langue originale"].toUpperCase() : "FR"
+                );
+                /* K */ newRowData.push(line["Année parution"]);
+                /* L */ newRowData.push(line["Note"]);
+
+                console.log(newRowData);
+                resultingArray.push(newRowData);
+            }
+            const destSheet = XLSX.utils.aoa_to_sheet(resultingArray);
+            var wscols = [
+                {wch:15},
+                {wch:60},
+                {wch:5},
+                {wch:32},
+                {wch:24},
+                {wch:70},
+                {wch:30},
+                {wch:15},
+                {wch:40},
+                {wch:15},
+                {wch:12},
+                {wch:25},
+            ];
+
+            destSheet['!cols'] = wscols;
+            XLSX.utils.book_append_sheet(destworkbook, destSheet, "sheetName");
+        })
+        // write result and make trigger download
+        console.log(destworkbook)
+        
+        XLSX.writeFile(destworkbook, file.name.replace(/\.xlsx?/, '_cleaned.xlsx'))
+        
+
+        };
+
+        reader.onerror = function(ex) {
+        console.log(ex);
+        };
+
+        reader.readAsBinaryString(file);
+    };
+
+};
+
+function cleanFile() {
+    // event.preventDefault();
+    var excelToJSON = new ExcelToJSON();
+    var file = document.querySelector('input[type=file]').files[0];
+    //console.log(file);
+    if(file){
+        excelToJSON.parseExcel(file);
+    } else {
+        alert("Aucun fichier sélectionné");
+    }
+    
+}
+
+</script>
+</head>
+<body>
+    <h1>Upload de fichier Excel</h1>
+    <input type="file" name="file" accept=".xlsx, .xls">
+    <button onclick="cleanFile()">Téléverser</button>
+</body>
+
+</html>
