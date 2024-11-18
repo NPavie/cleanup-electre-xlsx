@@ -6,6 +6,196 @@
     <title>Upload de fichier Excel Electre</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+
+const langueToCode = {
+    "afar":"aar",
+    "abkhaze":"abk",
+    "avestique":"ave",
+    "afrikaans":"afr",
+    "akan":"aka",
+    "amharique":"amh",
+    "aragonais":"arg",
+    "arabe":"ara",
+    "assamais":"asm",
+    "avar":"ava",
+    "aymara":"aym",
+    "azéri":"aze",
+    "bachkir":"bak",
+    "biélorusse":"bel",
+    "bulgare":"bul",
+    "bihari":"--",
+    "bichelamar":"bis",
+    "bambara":"bam",
+    "bengali":"ben",
+    "tibétain":"bod",
+    "breton":"bre",
+    "bosnien":"bos",
+    "catalan":"cat",
+    "tchétchène":"che",
+    "chamorro":"cha",
+    "corse":"cos",
+    "cri":"cre",
+    "tchèque":"ces",
+    "vieux-slave":"chu",
+    "tchouvache":"chv",
+    "gallois":"cym",
+    "danois":"dan",
+    "allemand":"deu",
+    "maldivien":"div",
+    "dzongkha":"dzo",
+    "ewe":"ewe",
+    "grec moderne":"ell",
+    "anglais":"eng",
+    "espéranto":"epo",
+    "espagnol":"spa",
+    "estonien":"est",
+    "basque":"eus",
+    "persan":"fas",
+    "peul":"ful",
+    "finnois":"fin",
+    "fidjien":"fij",
+    "féroïen":"fao",
+    "français":"fra",
+    "frison occidental":"fry",
+    "irlandais":"gle",
+    "écossais":"gla",
+    "galicien":"glg",
+    "guarani":"grn",
+    "gujarati":"guj",
+    "mannois":"glv",
+    "haoussa":"hau",
+    "hébreu":"heb",
+    "hindi":"hin",
+    "hiri motu":"hmo",
+    "croate":"hrv",
+    "créole haïtien":"hat",
+    "hongrois":"hun",
+    "arménien":"hye",
+    "héréro":"her",
+    "interlingua":"ina",
+    "indonésien":"ind",
+    "occidental":"ile",
+    "igbo":"ibo",
+    "yi":"iii",
+    "inupiak":"ipk",
+    "ido":"ido",
+    "islandais":"isl",
+    "italien":"ita",
+    "inuktitut":"iku",
+    "japonais":"jpn",
+    "javanais":"jav",
+    "géorgien":"kat",
+    "kikongo":"kon",
+    "kikuyu":"kik",
+    "kuanyama":"kua",
+    "kazakh":"kaz",
+    "groenlandais":"kal",
+    "khmer":"khm",
+    "kannada":"kan",
+    "coréen":"kor",
+    "kanouri":"kau",
+    "cachemiri":"kas",
+    "kurde":"kur",
+    "komi":"kom",
+    "cornique":"cor",
+    "kirghiz":"kir",
+    "latin":"lat",
+    "luxembourgeois":"ltz",
+    "ganda":"lug",
+    "limbourgeois":"lim",
+    "lingala":"lin",
+    "lao":"lao",
+    "lituanien":"lit",
+    "luba":"lub",
+    "letton":"lav",
+    "malgache":"mlg",
+    "marshallais":"mah",
+    "maori de Nouvelle-Zélande":"mri",
+    "macédonien":"mkd",
+    "malayalam":"mal",
+    "mongol":"mon",
+    "moldave":"mol",
+    "marathi":"mar",
+    "malais":"msa",
+    "maltais":"mlt",
+    "birman":"mya",
+    "nauruan":"nau",
+    "norvégien bokmål":"nob",
+    "sindebele":"nde",
+    "népalais":"nep",
+    "ndonga":"ndo",
+    "néerlandais":"nld",
+    "norvégien nynorsk":"nno",
+    "norvégien":"nor",
+    "nrebele":"nbl",
+    "navajo":"nav",
+    "chichewa":"nya",
+    "occitan":"oci",
+    "ojibwé":"oji",
+    "oromo":"orm",
+    "oriya":"ori",
+    "ossète":"oss",
+    "pendjabi":"pan",
+    "pali":"pli",
+    "polonais":"pol",
+    "pachto":"pus",
+    "portugais":"por",
+    "quechua":"que",
+    "romanche":"roh",
+    "kirundi":"run",
+    "roumain":"ron",
+    "russe":"rus",
+    "kinyarwanda":"kin",
+    "sanskrit":"san",
+    "sarde":"srd",
+    "sindhi":"snd",
+    "same du Nord":"sme",
+    "sango":"sag",
+    "serbo-croate":"hbs",
+    "cingalais":"sin",
+    "slovaque":"slk",
+    "slovène":"slv",
+    "samoan":"smo",
+    "shona":"sna",
+    "somali":"som",
+    "albanais":"sqi",
+    "serbe":"srp",
+    "swati":"ssw",
+    "sotho du Sud":"sot",
+    "soundanais":"sun",
+    "suédois":"swe",
+    "swahili":"swa",
+    "tamoul":"tam",
+    "télougou":"tel",
+    "tadjik":"tgk",
+    "thaï":"tha",
+    "tigrigna":"tir",
+    "turkmène":"tuk",
+    "tagalog":"tgl",
+    "tswana":"tsn",
+    "tongien":"ton",
+    "turc":"tur",
+    "tsonga":"tso",
+    "tatar":"tat",
+    "twi":"twi",
+    "tahitien":"tah",
+    "ouïghour":"uig",
+    "ukrainien":"ukr",
+    "ourdou":"urd",
+    "ouzbek":"uzb",
+    "venda":"ven",
+    "vietnamien":"vie",
+    "volapük":"vol",
+    "wallon":"wln",
+    "wolof":"wol",
+    "xhosa":"xho",
+    "yiddish":"yid",
+    "yoruba":"yor",
+    "zhuang":"zha",
+    "chinois":"zho",
+    "zoulou":"zul" 
+}
+
 var ExcelToJSON = function() {
 
     this.parseExcel = function(file) {
@@ -28,33 +218,73 @@ var ExcelToJSON = function() {
         Colonne K : Remplacer le texte "Année parution" par "Date parution"
         Colonne L : Remplacer le texte "Note" par "Commentaires
       */
-
+        /**
+         * @typedef {{"EAN":string, "Titre":string, "Série":string, "Auteur":string, "Éditeur":string, "Collection":string, "nb-pages":string, "Traduit de":string, "Date parution":string, "Commentaire":string, "EAN lié":string, "Autres formats":string
+        }} LineImport
+        */
+    
         const resultingArray = [
             ["ISBN", "Titre", "Tome", "Auteur", "Editeur", "Mot matière", "Collection", "Collation 1", "Collation 2", "Langue originale", "Date parution", "Commentaires"]
         ];
         var destworkbook = XLSX.utils.book_new();
         
         workbook.SheetNames.forEach(function(sheetName) {
+            //
+            
             // Here is your object
-            /** @type {Array<{"ISBN":string, "Titre":string, "Auteur":string, "Editeur":string, "Mot matière":string, "Collection":string, "Collation 1":string, "Collation 2":string, "Langue originale":string, "Année parution":string, "Note":string }>} */
+            /** @type {Array<LineImport>} */
             var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
             for(const line of XL_row_object){
-                console.log(line["ISBN"].replace(/(\d+)\s*:/, "$1"))
+
+                const eans = line["EAN lié"]?.split('|');
+                
+                const eanEpub = line["Autres formats"]?.split('|').reduce((acc, curr, index) => {
+                    if(curr.includes("epub")){
+                        acc = eans[index];
+                    }
+                    return acc;
+                }, "") || "";
+
+                let nbTome = ""
+                if(line["Série"]){
+                    const match = line["Série"].match(/(\d+)$/);
+                    if(match){
+                        nbTome = match[1];
+                    }
+                }
+                let comments = []
+                if(line["Commentaire"]?.length > 0){
+                    comments.push(line["Commentaire"]);
+                }
+                if(eanEpub.length > 0){
+                    comments.push(`EAN epub: ${eanEpub}`);
+                }
+
+                let auteur = line["Auteur"]?.replace(/([^,]+),\s*([^\s]+)/, "$2 $1") || "";
+                if(auteur.includes("(")){
+                    auteur = auteur.substring(0, auteur.indexOf("("))
+                    .trim()
+                }
+
+
+                console.log(line["EAN"].replace(/(\d+)\s*:/, "$1"))
                 const newRowData = [];
-                /* A */ newRowData.push(line["ISBN"].replace(/(\d+)\s*:/, "$1"));
-                /* B */ newRowData.push(line["Titre"] || "");
-                /* C */ newRowData.push(line["Tome"] || "");
-                /* D */ newRowData.push(line["Auteur"].replace(/(\w+),\s*(\w+).*/, "$2 $1") || "");
-                /* E */ newRowData.push(line["Editeur"].replace(/,/g, ""));
-                /* F */ newRowData.push(line["Mot matière"]);
-                /* G */ newRowData.push(line["Collection"]?.replace(/\(([^)]+)\)/, "$1") || "");
-                /* H */ newRowData.push(line["Collation 1"].replace(/\d vol. \(([^)]+)\).*/, "($1)"));
-                /* I */ newRowData.push(line["Collation 2"]?.replace(/\s*;/g, "") || "");
-                /* J */ newRowData.push(
-                    line["Langue originale"] && line["Langue originale"].length > 0 ? line["Langue originale"].toUpperCase() : "FR"
+                /* A ISBN */ newRowData.push(line["EAN"]);
+                /* B Titre */ newRowData.push(line["Titre"] || "");
+                /* C Tome */ newRowData.push(nbTome);
+                /* D Auteur */ newRowData.push(auteur);
+                /* E Editeur */ newRowData.push(line["Éditeur"]?.replace(/,/g, "") || "");
+                /* F Mot matière */ newRowData.push("");
+                /* G Collection */ newRowData.push(line["Collection"] || "");
+                /* H "Collation 1 */ newRowData.push(`(${line["nb-pages"]?.replace(/[^0-9]+/g,'') || "0"} p.)`|| "");
+                /* I Collation 2 */ newRowData.push("");
+                /* J Langue originale */ newRowData.push(
+                    langueToCode[line["Traduit de"]?.replace(/^([^\s]+)\s.*/,"$1")]?.toUpperCase() || "FR"
                 );
-                /* K */ newRowData.push(line["Année parution"]);
-                /* L */ newRowData.push(line["Note"]);
+                /* K */ newRowData.push(line["Date parution"].split('/').slice(1).reverse().join('') || "");
+                /* L */ newRowData.push(
+                    comments.join(' - ')
+                );
 
                 console.log(newRowData);
                 resultingArray.push(newRowData);
